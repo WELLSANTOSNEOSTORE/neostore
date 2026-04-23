@@ -10,9 +10,11 @@ datasource db {
 
 model Participant {
   id          String    @id @default(cuid())
-  type        String    // Convidado | Palestrante | Jornalista | Staff
+  seq         Int       @default(autoincrement())
+  type        String
   name        String
-  birthDate   String?   // DD/MM/AAAA
+  email       String?
+  birthDate   String?
   phone       String?
   company     String?
   jobRole     String?
@@ -20,6 +22,7 @@ model Participant {
   present     Boolean   @default(false)
   checkinAt   DateTime?
   checkoutAt  DateTime?
+  emailSentAt DateTime?
   dayId       String
   day         Day       @relation(fields: [dayId], references: [id], onDelete: Cascade)
   createdAt   DateTime  @default(now())

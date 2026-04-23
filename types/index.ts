@@ -2,8 +2,10 @@ export type ParticipantType = 'Convidado' | 'Palestrante' | 'Jornalista' | 'Staf
 
 export interface Participant {
   id: string
+  seq: number
   type: ParticipantType
   name: string
+  email?: string | null
   birthDate?: string | null
   phone?: string | null
   company?: string | null
@@ -12,6 +14,7 @@ export interface Participant {
   present: boolean
   checkinAt?: string | null
   checkoutAt?: string | null
+  emailSentAt?: string | null
   dayId: string
   createdAt: string
 }
@@ -41,6 +44,7 @@ export interface Stats {
 export interface RegistrationFormData {
   type: ParticipantType
   name: string
+  email: string
   birthDate: string
   phone: string
   company: string
@@ -51,7 +55,9 @@ export interface RegistrationFormData {
 
 export interface ExportRow {
   '#': number
+  'ID': string
   Nome: string
+  Email: string
   Telefone: string
   Empresa: string
   Cargo: string
@@ -65,4 +71,8 @@ export interface ExportRow {
   Permanência: string
   'Registrado em': string
   Observações: string
+}
+
+export function credentialId(seq: number): string {
+  return `NEO-${seq.toString().padStart(4, '0')}`
 }

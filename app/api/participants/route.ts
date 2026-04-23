@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma'
 
 export async function POST(req: Request) {
   const body = await req.json()
-  const { type, name, birthDate, phone, company, jobRole, notes, checkInNow, dayId } = body
+  const { type, name, email, birthDate, phone, company, jobRole, notes, checkInNow, dayId } = body
 
   if (!name?.trim()) {
     return NextResponse.json({ error: 'Nome é obrigatório' }, { status: 400 })
@@ -14,6 +14,7 @@ export async function POST(req: Request) {
     data: {
       type: type || 'Convidado',
       name: name.trim(),
+      email: email?.trim() || null,
       birthDate: birthDate || null,
       phone: phone || null,
       company: company || null,
