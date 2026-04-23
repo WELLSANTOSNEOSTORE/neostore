@@ -6,10 +6,11 @@ import StatsBar from './StatsBar'
 import DayTabs from './DayTabs'
 import ParticipantsTable from './ParticipantsTable'
 import ExportTools from './ExportTools'
+import GlobalSearch from './GlobalSearch'
 import RegistrationForm from '../registration/RegistrationForm'
-import { Database, BarChart3, Wrench, UserPlus } from 'lucide-react'
+import { Database, BarChart3, UserPlus, Search } from 'lucide-react'
 
-type MobileTab = 'registrar' | 'banco' | 'resumo' | 'ferramentas'
+type MobileTab = 'registrar' | 'banco' | 'buscar' | 'resumo'
 
 interface AdminPanelProps {
   days: Day[]
@@ -82,12 +83,6 @@ export default function AdminPanel({ days, onDaysChange }: AdminPanelProps) {
     await refreshDays()
   }
 
-  const handleImport = async (importedDays: Day[]) => {
-    await refreshDays()
-    if (importedDays.length > 0) setActiveDayId(importedDays[importedDays.length - 1].id)
-  }
-
-  // Auto-create day if none exist
   if (days.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center gap-4 py-16">
@@ -104,20 +99,29 @@ export default function AdminPanel({ days, onDaysChange }: AdminPanelProps) {
       {/* DESKTOP layout */}
       <div className="hidden lg:flex gap-4 h-[calc(100vh-120px)]">
         {/* Left: form */}
-        <div className="w-80 flex-shrink-0 flex flex-col gap-4">
-          <div className="glass-card p-5 flex-shrink-0">
-            <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider mb-4" style={{ fontFamily: 'Syne' }}>
+        <div className="w-80 flex-shrink-0 flex flex-col gap-4 overflow-y-auto">
+          <div className="glass-card p-5">
+            <h3 className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-4">
               Novo Participante
             </h3>
-            {activeDayId && (
-              <RegistrationForm dayId={activeDayId} onSuccess={refreshDays} />
-            )}
+            {activeDayId && <RegistrationForm dayId={activeDayId} onSuccess={refreshDays} />}
+          </div>
+
+          {/* Busca global — desktop */}
+          <div className="glass-card p-5 flex-1">
+            <h3 className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-3">
+              Busca Rápida
+            </h3>
+            <GlobalSearch days={days} />
           </div>
         </div>
 
         {/* Right: table + tools */}
         <div className="flex-1 flex flex-col gap-4 min-w-0 overflow-hidden">
-          <StatsBar stats={stats} />
+          <div className="flex items-center justify-between gap-4">
+            <StatsBar stats={stats} />
+            <ExportTools days={days} />
+          </div>
           <DayTabs
             days={days}
             activeDayId={activeDayId}
@@ -134,14 +138,14 @@ export default function AdminPanel({ days, onDaysChange }: AdminPanelProps) {
               onRemove={handleRemove}
             />
           </div>
-          <ExportTools days={days} activeDayId={activeDayId} onImport={handleImport} />
         </div>
       </div>
 
       {/* MOBILE layout */}
       <div className="lg:hidden flex flex-col gap-3 pb-20">
-        {/* Stats always visible */}
-        <StatsBar stats={stats} />
+        <div className="flex items-center justify-between gap-3">
+          <StatsBar stats={stats} />
+        </div>
         <DayTabs
           days={days}
           activeDayId={activeDayId}
@@ -151,14 +155,17 @@ export default function AdminPanel({ days, onDaysChange }: AdminPanelProps) {
           onClearOld={handleClearOld}
         />
 
-        {/* Tab content */}
         {mobileTab === 'registrar' && (
           <div className="glass-card p-5 fade-in">
             {activeDayId && <RegistrationForm dayId={activeDayId} onSuccess={refreshDays} />}
           </div>
         )}
+
         {mobileTab === 'banco' && (
           <div className="glass-card p-3 fade-in" style={{ minHeight: 400 }}>
+            <div className="flex justify-end mb-3">
+              <ExportTools days={days} />
+            </div>
             <ParticipantsTable
               participants={participants}
               onTogglePresence={handleTogglePresence}
@@ -167,9 +174,16 @@ export default function AdminPanel({ days, onDaysChange }: AdminPanelProps) {
             />
           </div>
         )}
+
+        {mobileTab === 'buscar' && (
+          <div className="glass-card p-4 fade-in">
+            <GlobalSearch days={days} />
+          </div>
+        )}
+
         {mobileTab === 'resumo' && (
           <div className="glass-card p-5 fade-in space-y-3">
-            <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider" style={{ fontFamily: 'Syne' }}>
+            <h3 className="text-xs font-semibold text-white/40 uppercase tracking-wider">
               Resumo por Tipo
             </h3>
             {(['Convidado', 'Palestrante', 'Jornalista', 'Staff'] as const).map(type => {
@@ -189,11 +203,6 @@ export default function AdminPanel({ days, onDaysChange }: AdminPanelProps) {
             })}
           </div>
         )}
-        {mobileTab === 'ferramentas' && (
-          <div className="fade-in">
-            <ExportTools days={days} activeDayId={activeDayId} onImport={handleImport} />
-          </div>
-        )}
 
         {/* Bottom nav */}
         <div className="fixed bottom-0 left-0 right-0 z-30 flex"
@@ -201,8 +210,8 @@ export default function AdminPanel({ days, onDaysChange }: AdminPanelProps) {
           {([
             { id: 'registrar', icon: UserPlus, label: 'Registrar' },
             { id: 'banco', icon: Database, label: 'Banco' },
+            { id: 'buscar', icon: Search, label: 'Buscar' },
             { id: 'resumo', icon: BarChart3, label: 'Resumo' },
-            { id: 'ferramentas', icon: Wrench, label: 'Ferramentas' },
           ] as const).map(({ id, icon: Icon, label }) => (
             <button
               key={id}
