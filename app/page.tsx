@@ -5,11 +5,14 @@ import Header from '@/components/layout/Header'
 import PinPad from '@/components/admin/PinPad'
 import RegistrationForm from '@/components/registration/RegistrationForm'
 import AdminPanel from '@/components/admin/AdminPanel'
+import QRScanner from '@/components/admin/QRScanner'
 import { Day } from '@/types'
+import { QrCode } from 'lucide-react'
 
 export default function Home() {
   const [isAdmin, setIsAdmin] = useState(false)
   const [showPin, setShowPin] = useState(false)
+  const [showScanner, setShowScanner] = useState(false)
   const [days, setDays] = useState<Day[]>([])
   const [activeDayId, setActiveDayId] = useState<string>('')
   const [loading, setLoading] = useState(true)
@@ -71,6 +74,10 @@ export default function Home() {
         <PinPad onSuccess={() => { setIsAdmin(true); setShowPin(false) }} onClose={() => setShowPin(false)} />
       )}
 
+      {showScanner && (
+        <QRScanner onClose={() => setShowScanner(false)} onCheckedIn={() => fetchDays(activeDayId)} />
+      )}
+
       <main className="max-w-7xl mx-auto px-4 py-6">
         {loading ? (
           <div className="flex items-center justify-center h-64">
@@ -95,6 +102,16 @@ export default function Home() {
                 {publicDay ? publicDay.label : 'Preencha seus dados para credenciar'}
               </p>
             </div>
+
+            {/* Botão de scanner QR na tela pública */}
+            <button
+              onClick={() => setShowScanner(true)}
+              className="w-full mb-4 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-medium transition-all"
+              style={{ background: 'rgba(196,181,253,0.08)', border: '1px solid rgba(196,181,253,0.25)', color: '#c4b5fd' }}
+            >
+              <QrCode size={16} />
+              Já tenho credencial — Escanear QR Code
+            </button>
 
             <div className="glass-card p-6">
               {activeDayId ? (
