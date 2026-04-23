@@ -3,8 +3,6 @@ import { Resend } from 'resend'
 import QRCode from 'qrcode'
 import { prisma } from '@/lib/prisma'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
-
 function credentialId(seq: number) {
   return `NEO-${seq.toString().padStart(4, '0')}`
 }
@@ -107,6 +105,8 @@ export async function POST(req: Request) {
   if (targets.length === 0) {
     return NextResponse.json({ error: 'Nenhum participante com email válido' }, { status: 400 })
   }
+
+  const resend = new Resend(process.env.RESEND_API_KEY)
 
   const results = await Promise.allSettled(
     targets.map(async p => {
