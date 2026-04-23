@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Participant {
+  id          String    @id @default(cuid())
+  type        String    // Convidado | Palestrante | Jornalista | Staff
+  name        String
+  birthDate   String?   // DD/MM/AAAA
+  phone       String?
+  company     String?
+  jobRole     String?
+  notes       String?
+  present     Boolean   @default(false)
+  checkinAt   DateTime?
+  checkoutAt  DateTime?
+  dayId       String
+  day         Day       @relation(fields: [dayId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+
+  @@index([dayId])
+  @@index([type])
+}
+
+model Day {
+  id           String        @id @default(cuid())
+  label        String
+  createdAt    DateTime      @default(now())
+  participants Participant[]
+}
+
+model Settings {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt
+}

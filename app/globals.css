@@ -1,0 +1,151 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --purple: #6b21c8;
+  --purple2: #8b3cf7;
+  --teal: #14d9b0;
+  --green: #10d9a0;
+  --yellow: #fbbf24;
+  --red: #f87171;
+  --glow: #c4b5fd;
+  --bg1: #0d0520;
+  --bg2: #0a1628;
+  --glass: rgba(255, 255, 255, 0.04);
+  --glass-border: rgba(255, 255, 255, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html, body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  background: linear-gradient(135deg, var(--bg1) 0%, #0f1e3a 50%, var(--bg2) 100%);
+  min-height: 100dvh;
+  color: #f8f4ff;
+  font-family: var(--font-inter, 'Inter', sans-serif);
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-syne, 'Syne', sans-serif);
+}
+
+@layer components {
+  .glass-card {
+    @apply rounded-2xl border;
+    background: var(--glass);
+    border-color: var(--glass-border);
+    backdrop-filter: blur(16px);
+  }
+
+  .input-field {
+    @apply w-full rounded-xl px-4 py-3 text-white placeholder-white/30 outline-none transition-all;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .input-field:focus {
+    border-color: var(--purple2);
+    box-shadow: 0 0 0 3px rgba(139, 60, 247, 0.15);
+  }
+
+  .btn-primary {
+    @apply w-full py-4 rounded-xl font-semibold text-white transition-all;
+    background: linear-gradient(135deg, var(--purple2), var(--teal));
+    box-shadow: 0 4px 24px rgba(139, 60, 247, 0.4);
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 32px rgba(139, 60, 247, 0.5);
+  }
+
+  .btn-primary:active:not(:disabled) { transform: translateY(0); }
+
+  .btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .glow-text {
+    color: var(--glow);
+    text-shadow: 0 0 20px rgba(196, 181, 253, 0.5);
+  }
+
+  .badge-convidado {
+    background: rgba(139, 60, 247, 0.2);
+    color: #c4b5fd;
+    border: 1px solid rgba(139, 60, 247, 0.3);
+  }
+  .badge-palestrante {
+    background: rgba(20, 217, 176, 0.15);
+    color: #5eead4;
+    border: 1px solid rgba(20, 217, 176, 0.3);
+  }
+  .badge-jornalista {
+    background: rgba(251, 191, 36, 0.15);
+    color: #fcd34d;
+    border: 1px solid rgba(251, 191, 36, 0.3);
+  }
+  .badge-staff {
+    background: rgba(248, 113, 113, 0.15);
+    color: #fca5a5;
+    border: 1px solid rgba(248, 113, 113, 0.3);
+  }
+}
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(139, 60, 247, 0.4); border-radius: 2px; }
+
+.pin-btn {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 1.25rem;
+  font-weight: 600;
+  transition: all 0.15s;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pin-btn:hover { background: rgba(139, 60, 247, 0.2); border-color: var(--purple2); }
+.pin-btn:active { transform: scale(0.9); background: rgba(139, 60, 247, 0.35); }
+
+.toggle-switch { position: relative; width: 44px; height: 24px; }
+.toggle-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+.toggle-slider {
+  position: absolute; cursor: pointer; inset: 0;
+  background: rgba(255,255,255,0.1); border-radius: 34px; transition: 0.3s;
+}
+.toggle-slider:before {
+  content: ''; position: absolute;
+  width: 18px; height: 18px; left: 3px; bottom: 3px;
+  background: white; border-radius: 50%; transition: 0.3s;
+}
+input:checked + .toggle-slider { background: linear-gradient(135deg, var(--purple2), var(--teal)); }
+input:checked + .toggle-slider:before { transform: translateX(20px); }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.fade-in { animation: fadeIn 0.3s ease-out; }
+.slide-in { animation: slideIn 0.25s ease-out; }
+
+@layer utilities {
+  .text-balance { text-wrap: balance; }
+}
