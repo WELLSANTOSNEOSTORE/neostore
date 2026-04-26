@@ -9,8 +9,9 @@ import ExportTools from './ExportTools'
 import GlobalSearch from './GlobalSearch'
 import QRScanner from './QRScanner'
 import EmailSender from './EmailSender'
+import ImportParticipants from './ImportParticipants'
 import RegistrationForm from '../registration/RegistrationForm'
-import { Database, BarChart3, UserPlus, Search, Camera, Mail } from 'lucide-react'
+import { Database, BarChart3, UserPlus, Search, Camera, Mail, FileSpreadsheet } from 'lucide-react'
 
 type MobileTab = 'registrar' | 'banco' | 'buscar' | 'resumo'
 
@@ -24,6 +25,7 @@ export default function AdminPanel({ days, onDaysChange }: AdminPanelProps) {
   const [mobileTab, setMobileTab] = useState<MobileTab>('banco')
   const [showScanner, setShowScanner] = useState(false)
   const [showEmail, setShowEmail] = useState(false)
+  const [showImport, setShowImport] = useState(false)
 
   const activeDay = days.find(d => d.id === activeDayId)
   const participants = activeDay?.participants || []
@@ -91,11 +93,16 @@ export default function AdminPanel({ days, onDaysChange }: AdminPanelProps) {
   }
 
   const toolbarButtons = (
-    <div className="flex items-center gap-2 flex-shrink-0">
+    <div className="flex items-center gap-2 flex-shrink-0 flex-wrap">
       <button onClick={() => setShowScanner(true)}
         className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium transition-all"
         style={{ background: 'rgba(196,181,253,0.1)', border: '1px solid rgba(196,181,253,0.25)', color: '#c4b5fd' }}>
         <Camera size={14} /> Scanner
+      </button>
+      <button onClick={() => setShowImport(true)}
+        className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium transition-all"
+        style={{ background: 'rgba(139,60,247,0.1)', border: '1px solid rgba(139,60,247,0.25)', color: '#a78bfa' }}>
+        <FileSpreadsheet size={14} /> Importar
       </button>
       <button onClick={() => setShowEmail(true)}
         className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium transition-all"
@@ -113,6 +120,14 @@ export default function AdminPanel({ days, onDaysChange }: AdminPanelProps) {
       )}
       {showEmail && (
         <EmailSender days={days} activeDayId={activeDayId} onClose={() => setShowEmail(false)} onSent={refreshDays} />
+      )}
+      {showImport && activeDay && (
+        <ImportParticipants
+          dayId={activeDayId}
+          dayLabel={activeDay.label}
+          onClose={() => setShowImport(false)}
+          onImported={refreshDays}
+        />
       )}
 
       {/* DESKTOP */}
@@ -163,11 +178,16 @@ export default function AdminPanel({ days, onDaysChange }: AdminPanelProps) {
         {mobileTab === 'banco' && (
           <div className="glass-card p-3 fade-in" style={{ minHeight: 400 }}>
             <div className="flex items-center justify-between mb-3 gap-2 flex-wrap">
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
                 <button onClick={() => setShowScanner(true)}
                   className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium"
                   style={{ background: 'rgba(196,181,253,0.1)', border: '1px solid rgba(196,181,253,0.25)', color: '#c4b5fd' }}>
                   <Camera size={13} /> Scanner
+                </button>
+                <button onClick={() => setShowImport(true)}
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium"
+                  style={{ background: 'rgba(139,60,247,0.1)', border: '1px solid rgba(139,60,247,0.25)', color: '#a78bfa' }}>
+                  <FileSpreadsheet size={13} /> Importar
                 </button>
                 <button onClick={() => setShowEmail(true)}
                   className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium"
