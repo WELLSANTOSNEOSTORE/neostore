@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Delete } from 'lucide-react'
 
 interface PinPadProps {
@@ -46,6 +46,17 @@ export default function PinPad({ onSuccess, onClose }: PinPadProps) {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (loading) return
+      if (e.key >= '0' && e.key <= '9') handleDigit(e.key)
+      else if (e.key === 'Backspace') handleDelete()
+      else if (e.key === 'Escape') onClose()
+    }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [pin, loading])
 
   const digits = ['1','2','3','4','5','6','7','8','9','','0','⌫']
 
